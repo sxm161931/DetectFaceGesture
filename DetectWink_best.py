@@ -13,7 +13,7 @@ def detectWink(frame, location, ROI, cascade,w,h):
         kernel = np.array([[1,1,1], [1,-7,1], [1,1,1]])
         ROI = cv2.filter2D(ROI, -1, kernel) '''
     eyes = cascade.detectMultiScale(
-        ROI, 1.1014 ,15, 0|cv2.CASCADE_SCALE_IMAGE, (7, 17)) 
+        ROI, 1.1014 ,15, 0|cv2.CASCADE_SCALE_IMAGE, (5, 5)) 
     
     ''' if w < 100 and h < 100:
         eyes = cascade.detectMultiScale(
@@ -89,7 +89,7 @@ def detect(frame, faceCascade, eyesCascade):
     scaleFactor = 1.14 # range is from 1 to ..
     minNeighbors = 21   # range is from 0 to ..
     flag = 0|cv2.CASCADE_SCALE_IMAGE # either 0 or 0|cv2.CASCADE_SCALE_IMAGE 
-    minSize = (30,30) # range is from (0,0) to ..
+    minSize = (10,10) # range is from (0,0) to ..
     
     faces = faceCascade.detectMultiScale(
         gray_frame, 
@@ -99,6 +99,20 @@ def detect(frame, faceCascade, eyesCascade):
         minSize)
 
     detected = 0
+
+    if len(faces) == 0:
+        faceROI = gray_frame
+        h,w =  gray_frame.shape
+        
+        x =0
+        y =0
+        if detectWink(frame, (x, y), faceROI, eyesCascade,w,h):
+            detected += 1
+            h1 = (int)(h/1.5)
+            cv2.rectangle(frame, (x,y), (x+w,y+h1), (255, 0, 0), 2)
+            #print("detected",f)
+        else:
+            cv2.rectangle(frame, (x,y), (x+w,y+h), (0, 255, 0), 2)
     for f in faces:
         
         x, y, w, h = f[0], f[1], f[2], f[3]
