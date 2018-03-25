@@ -13,7 +13,7 @@ def detectWink(frame, location, ROI, cascade,w,h):
         kernel = np.array([[1,1,1], [1,-7,1], [1,1,1]])
         ROI = cv2.filter2D(ROI, -1, kernel) '''
     eyes = cascade.detectMultiScale(
-        ROI, 1.1014 ,15, 0|cv2.CASCADE_SCALE_IMAGE, (10, 20)) 
+        ROI, 1.1014 ,15, 0|cv2.CASCADE_SCALE_IMAGE, (7, 17)) 
     
     ''' if w < 100 and h < 100:
         eyes = cascade.detectMultiScale(
@@ -56,7 +56,7 @@ def detect(frame, faceCascade, eyesCascade):
         #gray_frame = exposure.adjust_gamma(gray_frame, 2)
     #print(blur_res)
 
-    #gray_frame = exposure.adjust_gamma(gray_frame, 2)
+    
 
     #else :
 
@@ -68,14 +68,18 @@ def detect(frame, faceCascade, eyesCascade):
             total+= gray_frame[i, j]
     
     avg=total/(rows*cols)
+    
+    
     # print("Average: " + str(avg))   
     if avg > 190 or avg < 65: 
 
 
-        gray_frame = cv2.equalizeHist(gray_frame)
+        gray_frame1 = cv2.equalizeHist(gray_frame)
+        gray_frame = gray_frame1
+        
     
-    gray_frame = cv2.GaussianBlur(gray_frame,(3,3),0)
-
+    gray_frame2 = cv2.GaussianBlur(gray_frame,(3,3),0)
+    gray_frame = gray_frame2 
 
         #cv2.imshow("Sharpen", gray_frame)
 
@@ -83,7 +87,7 @@ def detect(frame, faceCascade, eyesCascade):
     #gray_frame = cv2.cvtColor(gray_frame,cv2.COLOR_GRAY2RGB)
 
     scaleFactor = 1.14 # range is from 1 to ..
-    minNeighbors = 11   # range is from 0 to ..
+    minNeighbors = 21   # range is from 0 to ..
     flag = 0|cv2.CASCADE_SCALE_IMAGE # either 0 or 0|cv2.CASCADE_SCALE_IMAGE 
     minSize = (30,30) # range is from (0,0) to ..
     
