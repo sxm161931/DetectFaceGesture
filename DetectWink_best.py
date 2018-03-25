@@ -13,7 +13,7 @@ def detectWink(frame, location, ROI, cascade,w,h):
         kernel = np.array([[1,1,1], [1,-7,1], [1,1,1]])
         ROI = cv2.filter2D(ROI, -1, kernel) '''
     eyes = cascade.detectMultiScale(
-        ROI, 1.1014 ,10, 0|cv2.CASCADE_SCALE_IMAGE, (10, 20)) 
+        ROI, 1.1014 ,15, 0|cv2.CASCADE_SCALE_IMAGE, (10, 20)) 
     
     ''' if w < 100 and h < 100:
         eyes = cascade.detectMultiScale(
@@ -82,8 +82,8 @@ def detect(frame, faceCascade, eyesCascade):
     
     #gray_frame = cv2.cvtColor(gray_frame,cv2.COLOR_GRAY2RGB)
 
-    scaleFactor = 1.1 # range is from 1 to ..
-    minNeighbors = 4   # range is from 0 to ..
+    scaleFactor = 1.14 # range is from 1 to ..
+    minNeighbors = 11   # range is from 0 to ..
     flag = 0|cv2.CASCADE_SCALE_IMAGE # either 0 or 0|cv2.CASCADE_SCALE_IMAGE 
     minSize = (30,30) # range is from (0,0) to ..
     
