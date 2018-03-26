@@ -9,15 +9,27 @@ from skimage import exposure
 def detectWink(frame, location, ROI, cascade,w,h):
     sharpness=cv2.Laplacian(ROI, cv2.CV_64F).var()
     # print("Face sharpness: ",sharpness)
-    ''' if sharpness < 20:
+    if sharpness < 20:
         kernel = np.array([[1,1,1], [1,-7,1], [1,1,1]])
-        ROI = cv2.filter2D(ROI, -1, kernel) '''
+        ROI = cv2.filter2D(ROI, -1, kernel) 
+    scaleFactor = 1.10414
+    minNeighbors = 15
     eyes = cascade.detectMultiScale(
-        ROI, 1.1014 ,15, 0|cv2.CASCADE_SCALE_IMAGE, (5, 5)) 
+        ROI, scaleFactor ,minNeighbors, 0|cv2.CASCADE_SCALE_IMAGE, (10, 10)) 
     
     ''' if w < 100 and h < 100:
         eyes = cascade.detectMultiScale(
         ROI, 3.0 ,4, 0|cv2.CASCADE_SCALE_IMAGE, (5, 10))   '''
+
+    while scaleFactor > 1.0005 and len(eyes) == 0:
+        
+        scaleFactor=((scaleFactor-1)/3.5)+1
+        minNeighbors+=112
+        # print("Eyes: "+str(len(eyes)))
+        # print("scale: "+str(scaleFactor))
+        # print("N: "+str(minNeighbors))
+        eyes = cascade.detectMultiScale(
+        ROI, scaleFactor ,minNeighbors, 0|cv2.CASCADE_SCALE_IMAGE, (10, 10)) 
     for e in eyes:
         e[0] += location[0]
         e[1] += location[1]
@@ -101,14 +113,18 @@ def detect(frame, faceCascade, eyesCascade):
     detected = 0
 
     if len(faces) == 0:
-        faceROI = gray_frame
-        h,w =  gray_frame.shape
         
         x =0
         y =0
+        h,w =  gray_frame.shape
+        h1 = (int)(h/1.5)
+        faceROI = gray_frame[y:y+h1, x:x+w]
+        
+        
+        
         if detectWink(frame, (x, y), faceROI, eyesCascade,w,h):
             detected += 1
-            h1 = (int)(h/1.5)
+            
             cv2.rectangle(frame, (x,y), (x+w,y+h1), (255, 0, 0), 2)
             #print("detected",f)
         else:
