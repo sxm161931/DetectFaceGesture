@@ -5,8 +5,9 @@ from os import listdir
 from os.path import isfile, join
 import sys
 
-def detectShush(frame, location, ROI, cascade):
-    mouths = cascade.detectMultiScale(ROI, 1.1285, 10, 0, (20, 20)) 
+def detectShush(frame, location, ROI, cascade,w,h):
+    mouth_w = (int)(w/4)
+    mouths = cascade.detectMultiScale(ROI, 1.81, 4, 0, (mouth_w, 15)) 
     for (mx, my, mw, mh) in mouths:
         mx += location[0]
         my += location[1]
@@ -18,23 +19,40 @@ def detect(frame, faceCascade, mouthsCascade):
 
     #gray_frame = cv2.equalizeHist(gray_frame)
     #gray_frame = cv2.medianBlur(gray_frame, 5)
+    rows, cols = gray_frame.shape
+    total=0
+    for i in range(0, rows) :
+        for j in range(0, cols) :
+            total+= gray_frame[i, j]
+    
+    avg=total/(rows*cols)
+    
+    
+    # print("Average: " + str(avg))   
+    if avg > 190 or avg < 65: 
+
+
+        gray_frame1 = cv2.equalizeHist(gray_frame)
+        gray_frame = gray_frame1
+        
     gray_frame = cv2.GaussianBlur(gray_frame,(3,3),0)
 
     faces = faceCascade.detectMultiScale(
-                gray_frame, 1.2315, 5, 0|cv2.CASCADE_SCALE_IMAGE, (20, 20))
+                gray_frame, 1.03315, 28, 0|cv2.CASCADE_SCALE_IMAGE, (20, 20))
     detected = 0
     for (x, y, w, h) in faces:
         # ROI for mouth
         x1 = x
-        h2 = int(h/1.85)
+        h2 = int(h/1.58)
         y1 = y + h2
+        
         mouthROI = gray_frame[y1:y1+h2, x1:x1+w]
 
-        if detectShush(frame, (x1, y1), mouthROI, mouthsCascade):
+        if detectShush(frame, (x1, y1), mouthROI, mouthsCascade,w,h):
             detected += 1
-            cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
+            cv2.rectangle(frame, (x, y+h2), (x+w, y+h), (255, 0, 0), 2)
         else:
-            cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+            cv2.rectangle(frame, (x, y+h2), (x+w, y+h), (0, 255, 0), 2)
     return detected
 
 
