@@ -125,7 +125,7 @@ def detect(frame, faceCascade, eyesCascade):
         if detectWink(frame, (x, y), faceROI, eyesCascade,w,h):
             detected += 1
             
-            cv2.rectangle(frame, (x,y), (x+w,y+h1), (255, 0, 0), 2)
+            cv2.rectangle(frame, (x,y), (x+w,y+h), (255, 0, 0), 2)
             #print("detected",f)
         else:
             cv2.rectangle(frame, (x,y), (x+w,y+h), (0, 255, 0), 2)
@@ -137,10 +137,11 @@ def detect(frame, faceCascade, eyesCascade):
         faceROI = gray_frame[y:y+h1, x:x+w]
         if detectWink(frame, (x, y), faceROI, eyesCascade,w,h):
             detected += 1
-            cv2.rectangle(frame, (x,y), (x+w,y+h1), (255, 0, 0), 2)
+            cv2.rectangle(frame, (x,y), (x+w,y+h), (255, 0, 0), 2)
             #print("detected",f)
         else:
-            cv2.rectangle(frame, (x,y), (x+w,y+h1), (0, 255, 0), 2)
+            cv2.rectangle(frame, (x,y), (x+w,y+h), (0, 255, 0), 2)
+    #print(detected)
     return detected
 
 
